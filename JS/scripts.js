@@ -23,12 +23,8 @@ fetchUsers('https://randomuser.me/api/?nat=us&results=12');
 //create 12 user cards
 
 function userCard(response) {
-    console.log(response);
-
     for(let i = 0; i < response.results.length; i++) {
         let employee = response.results[i];
-        console.log(employee);
-
         let card = document.createElement('div');
         card.className = 'card';
         gallery.appendChild(card);
@@ -47,6 +43,28 @@ function userCard(response) {
 
 //modal box for user
 
+function createModal(employee,index) {
+    const employeeModal = document.createElement('div');
+    employeeModal.className = 'modal-container';
+    employeeModal.insertAdjacentHTML('beforeend',`<div class="modal-container">
+    <div class="modal">
+        <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+        <div class="modal-info-container">
+            <img class="modal-img" src="${employee.picture.large}" alt="profile picture">
+            <h3 id="name" class="modal-name cap">${employee.name.first} ${current.name.last}</h3>
+            <p class="modal-text">${employee.email}</p>
+            <p class="modal-text cap">${employee.city}</p>
+            <hr>
+            <p class="modal-text">${employee.phone}</p>
+            <p class="modal-text">${employee.location}</p>
+            <p class="modal-text">Birthday: ${birthday}</p>
+        </div>
+    </div>`);
+
+    gallery.insertAdjacentHTML('afterend', employeeModal);
+    closeButton(employeeMOdal, index);
+}
+
 /*<div class="modal-container">
 <div class="modal">
     <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
@@ -63,3 +81,7 @@ function userCard(response) {
 </div>*/
 
 //close modal button 
+function closeButton(modal) {
+    const closeBtn = document.querySelector('#modal-close-btn');
+    closeBtn.addEventListener('click', modal.remove);
+}
