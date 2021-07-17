@@ -1,3 +1,5 @@
+
+
 //Fetch data from random user database
 const gallery = document.querySelector("#gallery");
 
@@ -6,8 +8,6 @@ function fetchUsers(url) {
         .then(checkStatus)
         .then(response => response.json())
         .then(userCard)
-        //.catch(error => 
-            //gallery.insertAdjacentHTML('beforeend', "<h3>Something went wrong, please try again.</h3>")); 
 }
 
 function checkStatus(response) {
@@ -21,7 +21,6 @@ function checkStatus(response) {
 fetchUsers('https://randomuser.me/api/?nat=us&results=12');
 
 //create 12 user cards
-
 function userCard(response) {
     for(let i = 0; i < response.results.length; i++) {
         let employee = response.results[i];
@@ -41,21 +40,19 @@ function userCard(response) {
 
         card.addEventListener('click', e => {
             if(e.target.value === 'card') {
-                createModal(employee);
+                createModal(response);
             } 
         });
     };
 } 
 
 //modal box for user
-let modal = document.createElement('div');
-
 function createModal(response) {
     for(let i = 0; i < response.results.length; i++) {
         let employee = response.results[i];
         let birthday = employee.dob;
+        let modal = document.createElement('div');
         modal.className = 'modal-container';
-        gallery.appendChild(modal);
         modal.insertAdjacentHTML('beforeend',`<div class="modal-container"
         <div class="modal">
             <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
@@ -70,11 +67,12 @@ function createModal(response) {
                 <p class="modal-text">Birthday: ${birthday}</p>
             </div>
         </div>`);
+        gallery.insertAdjacentHTML('afterend', modal);
     }
 }
 
 //close modal button 
-function closeModal() {
+function closeModal(modal) {
     let closeBtn = document.getElementById('modal-close-btn');
     closeBtn.addEventListener('click', modal.remove);
 }
