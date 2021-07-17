@@ -1,13 +1,13 @@
 //Fetch data from random user database
-const gallery = document.querySelector(".gallery");
+const gallery = document.querySelector("#gallery");
 
 function fetchUsers(url) {
     return fetch(url)
         .then(checkStatus)
         .then(response => response.json())
         .then(userCard)
-        .catch(error => 
-            gallery.insertAdjacentHTML('beforeend', "<h3>Something went wrong, please try again.</h3>")); 
+        //.catch(error => 
+            //gallery.insertAdjacentHTML('beforeend', "<h3>Something went wrong, please try again.</h3>")); 
 }
 
 function checkStatus(response) {
@@ -38,50 +38,43 @@ function userCard(response) {
             <p class="card-text">${employee.email}</p>
             <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
         </div>`);
+
+        card.addEventListener('click', e => {
+            if(e.target.value === 'card') {
+                createModal(employee);
+            } 
+        });
+    };
+} 
+
+//modal box for user
+let modal = document.createElement('div');
+
+function createModal(response) {
+    for(let i = 0; i < response.results.length; i++) {
+        let employee = response.results[i];
+        let birthday = employee.dob;
+        modal.className = 'modal-container';
+        gallery.appendChild(modal);
+        modal.insertAdjacentHTML('beforeend',`<div class="modal-container"
+        <div class="modal">
+            <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+            <div class="modal-info-container">
+                <img class="modal-img" src="${employee.picture.large}" alt="profile picture">
+                <h3 id="name" class="modal-name cap">${employee.name.first} ${employee.name.last}</h3>
+                <p class="modal-text">${employee.email}</p>
+                <p class="modal-text cap">${employee.city}</p>
+                <hr>
+                <p class="modal-text">${employee.phone}</p>
+                <p class="modal-text">${employee.location}</p>
+                <p class="modal-text">Birthday: ${birthday}</p>
+            </div>
+        </div>`);
     }
 }
 
-//modal box for user
-
-function createModal(employee,index) {
-    const employeeModal = document.createElement('div');
-    employeeModal.className = 'modal-container';
-    employeeModal.insertAdjacentHTML('beforeend',`<div class="modal-container">
-    <div class="modal">
-        <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
-        <div class="modal-info-container">
-            <img class="modal-img" src="${employee.picture.large}" alt="profile picture">
-            <h3 id="name" class="modal-name cap">${employee.name.first} ${current.name.last}</h3>
-            <p class="modal-text">${employee.email}</p>
-            <p class="modal-text cap">${employee.city}</p>
-            <hr>
-            <p class="modal-text">${employee.phone}</p>
-            <p class="modal-text">${employee.location}</p>
-            <p class="modal-text">Birthday: ${birthday}</p>
-        </div>
-    </div>`);
-
-    gallery.insertAdjacentHTML('afterend', employeeModal);
-    closeButton(employeeMOdal, index);
-}
-
-/*<div class="modal-container">
-<div class="modal">
-    <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
-    <div class="modal-info-container">
-        <img class="modal-img" src="https://placehold.it/125x125" alt="profile picture">
-        <h3 id="name" class="modal-name cap">name</h3>
-        <p class="modal-text">email</p>
-        <p class="modal-text cap">city</p>
-        <hr>
-        <p class="modal-text">(555) 555-5555</p>
-        <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
-        <p class="modal-text">Birthday: 10/21/2015</p>
-    </div>
-</div>*/
-
 //close modal button 
-function closeButton(modal) {
-    const closeBtn = document.querySelector('#modal-close-btn');
+function closeModal() {
+    let closeBtn = document.getElementById('modal-close-btn');
     closeBtn.addEventListener('click', modal.remove);
 }
