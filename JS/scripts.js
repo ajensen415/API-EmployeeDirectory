@@ -7,7 +7,9 @@ function fetchUsers(url) {
     return fetch(url)
         .then(checkStatus)
         .then(response => response.json())
-        .then(userCard)
+        .catch(error => {
+            gallery.insertAdjacentHTML('beforeend', `<h3>Oops! Something went wrong. Please try again later. ${error}</h3>`)
+        })
 }
 
 function checkStatus(response) {
@@ -18,7 +20,8 @@ function checkStatus(response) {
     }
 }
 
-fetchUsers('https://randomuser.me/api/?nat=us&results=12');
+fetchUsers('https://randomuser.me/api/?nat=us&results=12')
+    .then(userCard)
 
 //create 12 user cards
 function userCard(response) {
@@ -38,11 +41,8 @@ function userCard(response) {
             <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
         </div>`);
 
-        card.addEventListener('click', e => {
-            if(e.target.value === 'card') {
-                createModal(response);
-            } 
-        });
+        let clickCard = gallery.lastElementChild;
+            clickCard.addEventListener('click', e => createModal(response))
     };
 } 
 
@@ -51,9 +51,7 @@ function createModal(response) {
     for(let i = 0; i < response.results.length; i++) {
         let employee = response.results[i];
         let birthday = employee.dob;
-        let modal = document.createElement('div');
-        modal.className = 'modal-container';
-        modal.insertAdjacentHTML('beforeend',`<div class="modal-container"
+        document.querySelector('body').insertAdjacentHTML('beforeend',`<div class="modal-container"
         <div class="modal">
             <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
             <div class="modal-info-container">
@@ -67,12 +65,19 @@ function createModal(response) {
                 <p class="modal-text">Birthday: ${birthday}</p>
             </div>
         </div>`);
-        gallery.insertAdjacentHTML('afterend', modal);
     }
 }
 
+//display modal
+/*function displayModal(index) {
+    Array.from(document.querySelectorAll(`div.modal-container`)).forEach((modal) => {
+        modal.style.display = 'none';
+      })
+    
+      const modal = document.querySelector(`div.modal-container[data-index="${index}"]`);
+      modal.style.display = 'block';
+    }*/
+
 //close modal button 
-function closeModal(modal) {
-    let closeBtn = document.getElementById('modal-close-btn');
-    closeBtn.addEventListener('click', modal.remove);
-}
+let closeBtn = document.getElementById('modal-close-btn');
+closeBtn.addEventListener('click', modal.remove);
