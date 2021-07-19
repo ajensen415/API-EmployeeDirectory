@@ -1,8 +1,9 @@
 
 
-//Fetch data from random user database
+//Fetch data from random user database.
 const gallery = document.querySelector("#gallery");
 
+//function that fetches users & then parses the response to JSON. 
 function fetchUsers(url) {
     return fetch(url)
         .then(checkStatus)
@@ -12,6 +13,7 @@ function fetchUsers(url) {
         })
 }
 
+//function to check the status of the API response. 
 function checkStatus(response) {
     if(response.ok) {
         return Promise.resolve(response);
@@ -23,7 +25,7 @@ function checkStatus(response) {
 fetchUsers('https://randomuser.me/api/?nat=us&results=12')
     .then(userCard)
 
-//create 12 user cards
+//function to create 12 user cards & add them to the HTML.
 function userCard(response) {
     for(let i = 0; i < response.results.length; i++) {
         let employee = response.results[i];
@@ -41,43 +43,32 @@ function userCard(response) {
             <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
         </div>`);
 
-        let clickCard = gallery.lastElementChild;
-            clickCard.addEventListener('click', e => createModal(response))
+        //event listenered that listens for a clicked employee & creates their individual modal. 
+        card.addEventListener('click', () => createModal(employee))
     };
 } 
 
-//modal box for user
-function createModal(response) {
-    for(let i = 0; i < response.results.length; i++) {
-        let employee = response.results[i];
-        let birthday = employee.dob;
-        document.querySelector('body').insertAdjacentHTML('beforeend',`<div class="modal-container"
+//function to create modal for clicked employee & add it to the HTML.
+function createModal(employee) {
+        console.log(employee);
+        let birthday = new Date(employee.dob.date);
+        
+        document.body.insertAdjacentHTML('beforeend', `<div class="modal-container">
         <div class="modal">
             <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
             <div class="modal-info-container">
                 <img class="modal-img" src="${employee.picture.large}" alt="profile picture">
                 <h3 id="name" class="modal-name cap">${employee.name.first} ${employee.name.last}</h3>
                 <p class="modal-text">${employee.email}</p>
-                <p class="modal-text cap">${employee.city}</p>
+                <p class="modal-text cap">${employee.location.city}, ${employee.location.state}</p>
                 <hr>
                 <p class="modal-text">${employee.phone}</p>
-                <p class="modal-text">${employee.location}</p>
-                <p class="modal-text">Birthday: ${birthday}</p>
+                <p class="modal-text">${employee.location.street.number} ${employee.location.street.name} ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
+                <p class="modal-text">Birthday: ${birthday.getMonth()}/${birthday.getDay()}/${birthday.getYear()}</p>
             </div>
         </div>`);
-    }
+        
+        //event listener that listens for a click on the close button to close out the open modal. 
+        let closeBtn = document.querySelector('.modal-close-btn');
+        closeBtn.addEventListener('click', () => closeBtn.parentElement.parentElement.remove());
 }
-
-//display modal
-/*function displayModal(index) {
-    Array.from(document.querySelectorAll(`div.modal-container`)).forEach((modal) => {
-        modal.style.display = 'none';
-      })
-    
-      const modal = document.querySelector(`div.modal-container[data-index="${index}"]`);
-      modal.style.display = 'block';
-    }*/
-
-//close modal button 
-let closeBtn = document.getElementById('modal-close-btn');
-closeBtn.addEventListener('click', modal.remove);
